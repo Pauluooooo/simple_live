@@ -8,29 +8,38 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04   # ← 必须固定版本，最稳定
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # --- Install Java 17 ----
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # --- Install Flutter ---
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-      
 
-      - name: Flutter Doctor (debugging)
+      - name: Flutter Doctor
         run: flutter doctor -v
 
       - name: Install dependencies
         working-directory: simple_live_app
         run: flutter pub get
 
+      # --- Build APK ---
       - name: Build APK
         working-directory: simple_live_app
         run: flutter build apk --release
 
+      # --- Upload ---
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
