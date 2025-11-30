@@ -1,48 +1,43 @@
-name: Build Android APK
+name: Build Simple Live Android App
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      # --- Install Java 17 ----
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      # --- Install Flutter ---
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      - name: Flutter Doctor
-        run: flutter doctor -v
+      # 官方项目就是依赖 local.properties，这里需要手动创建
+      - name: Create local.properties
+        working-directory: simple_live_app/android
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
 
-      - name: Install dependencies
+      - name: Flutter pub get
         working-directory: simple_live_app
         run: flutter pub get
 
-      # --- Build APK ---
-      - name: Build APK
+      - name: Build Android APK
         working-directory: simple_live_app
         run: flutter build apk --release
 
-      # --- Upload ---
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: simple-live-apk
+          name: simple-live-release-apk
           path: simple_live_app/build/app/outputs/flutter-apk/app-release.apk
-          if-no-files-found: error
