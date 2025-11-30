@@ -1,0 +1,38 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'latest'
+          channel: 'stable'
+
+      - name: Change to app directory
+        run: cd simple_live_app
+
+      - name: Flutter pub get
+        working-directory: simple_live_app
+        run: flutter pub get
+
+      - name: Build APK
+        working-directory: simple_live_app
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: simple-live-app
+          path: simple_live_app/build/app/outputs/flutter-apk/app-release.apk
