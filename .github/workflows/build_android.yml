@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Flutter
         uses: subosito/flutter-action@v2
@@ -20,19 +20,17 @@ jobs:
           flutter-version: 'latest'
           channel: 'stable'
 
-      - name: Change to app directory
-        run: cd simple_live_app
-
-      - name: Flutter pub get
+      - name: Get dependencies
         working-directory: simple_live_app
         run: flutter pub get
 
-      - name: Build APK
+      - name: Build APK (release)
         working-directory: simple_live_app
         run: flutter build apk --release
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
         with:
-          name: simple-live-app
+          name: simple-live-apk
           path: simple_live_app/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
