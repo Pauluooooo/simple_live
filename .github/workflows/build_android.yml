@@ -18,7 +18,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 'latest'
+      
 
       - name: Flutter Doctor (debugging)
         run: flutter doctor -v
