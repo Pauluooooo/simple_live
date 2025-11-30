@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04   # ← 必须固定版本，最稳定
 
     steps:
       - name: Checkout repository
@@ -17,18 +17,21 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
+          channel: stable
           flutter-version: 'latest'
-          channel: 'stable'
 
-      - name: Get dependencies
+      - name: Flutter Doctor (debugging)
+        run: flutter doctor -v
+
+      - name: Install dependencies
         working-directory: simple_live_app
         run: flutter pub get
 
-      - name: Build APK (release)
+      - name: Build APK
         working-directory: simple_live_app
         run: flutter build apk --release
 
-      - name: Upload release APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: simple-live-apk
